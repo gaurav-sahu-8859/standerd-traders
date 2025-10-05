@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Image</title>
+</head>
+
+<body>
+    <h1>Upload Image</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="text" name="name" placeholder="Name" required />
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="text" name="profession" placeholder="Profession" required />
+        <input type="file" name="file" required />
+        <button type="submit">Upload</button>
+    </form>
+
+    <p id="msg"></p>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        //  TEMP: Hardcoded token (replace this with real token from login)
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaWF0IjoxNzU5NjcxNjMxLCJleHAiOjE3NTk2NzUyMzF9.z4tAMXKjel66UbARgoKTDOve6bbxVum9IB8Qr20ihWI"; // Replace with real token
+
+        document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+
+            try {
+                const res = await axios.post("http://localhost:3000/upload", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+
+                console.log("Upload response:", res.data);
+                document.getElementById("msg").textContent = res.data.message;
+
+            } catch (err) {
+                console.error("Upload error:", err);
+                document.getElementById("msg").textContent = "Upload failed.";
+            }
+        });
+    </script>
+</body>
+
+</html>

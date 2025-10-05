@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Example</title>
+</head>
+
+<body>
+    <form id="myForm">
+        <label>Name:</label><br>
+        <input type="text" name="name" required><br><br>
+
+
+        <label>Email:</label><br>
+        <input type="email" name="email" required><br><br>
+
+
+        <label>Password:</label><br>
+        <input type="password" name="password" required><br><br>
+
+
+        <button type="submit">Submit</button>
+    </form>
+
+
+    <script>
+        const form = document.getElementById("myForm");
+
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault(); // Prevent page reload
+
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+
+            fetch("http://localhost:3000/submit", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+                .then(res => res.text())
+                .then(msg => alert(msg))
+                .catch(err => console.error(err));
+        });
+    </script>
+</body>
+
+</html>

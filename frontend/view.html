@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>View Images</title>
+  <style>
+    .image-card {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin: 10px;
+      width: 250px;
+      display: inline-block;
+      vertical-align: top;
+      text-align: center;
+    }
+    .image-card img {
+      max-width: 200px;
+      display: block;
+      margin: 0 auto 10px;
+    }
+    .update-form {
+      display: none;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Image Gallery</h1>
+  <div id="gallery"></div>
+
+  <script>
+    //  TEMP: Hardcoded token (replace with login token)
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaWF0IjoxNzU5NjcxNjMxLCJleHAiOjE3NTk2NzUyMzF9.z4tAMXKjel66UbARgoKTDOve6bbxVum9IB8Qr20ihWI";
+
+    async function loadImages() {
+      try {
+        const res = await fetch("http://localhost:3000/images", {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+        const images = await res.json();
+
+        const gallery = document.getElementById("gallery");
+        gallery.innerHTML = "";
+
+        images.forEach(img => {
+          const url = "http://localhost:3000" + img.path;
+
+          const card = document.createElement("div");
+          card.className = "image-card";
+
+          const image = document.createElement("img");
+          image.src = url;
+
+          const info = document.createElement("div");
+          info.className = "info";
+          info.innerHTML = `
+            <strong>Name:</strong> <span>${img.name || "N/A"}</span><br/>
+            <strong>Email:</strong> <span>${img.email || "N/A"}</span><br/>
+            <strong>Profession:</strong> <span>${img.profession || "N/A"}</span><br/>
+            <small>Uploaded at: ${new Date(img.uploadedAt).toLocaleString()}</small>
+          `;
+
+          // Update button
+          const updateBtn = document.createElement("button");
+          updateBtn.textContent = "Update";
+
+          // Update form
+          const form = document.createElement("form");
+          form.className = "update-form";
+          form.innerHTML = `
+            <input type="hidden" name="originalFileName" value="${img.originalFileName}" />
+            <input type="text" name="name" value="${img.name || ""}" placeholder="Name" required />
+            <input type="email" name="email" value="${img.email || ""}" placeholder="Email" required />
+            <input type="text" name="profession" value="${img.profession || ""}" placeholder="Profession" required />
+            <input type="file" name="file" accept="image/*" />
+            <button type="submit">Save</button>
+            <button type="button" class="cancel-btn">Cancel</button>
+          `;
+
+          // Delete button
+          const deleteBtn = document.createElement("button");
+          deleteBtn.textContent = "Delete";
+          deleteBtn.style.marginLeft = "8px";
+
+          // Delete functionality
+          deleteBtn.addEventListener("click", async () => {
+            if (!confirm("Are you sure you want to delete this image?")) return;
+
+            try {
+              const res = await fetch("http://localhost:3000/delete", {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ originalFileName: img.originalFileName })
+              });
+
+              if (!res.ok) throw new Error("Delete failed");
+
+              alert("Deleted successfully");
+              loadImages();
+
+            } catch (err) {
+              alert("Failed to delete: " + err.message);
+            }
+          });
+
+          // Show form on update button click
+          updateBtn.addEventListener("click", () => {
+            form.style.display = "block";
+            info.style.display = "none";
+            updateBtn.style.display = "none";
+          });
+
+          // Cancel button hides form
+          form.querySelector(".cancel-btn").addEventListener("click", (e) => {
+            e.preventDefault();
+            form.style.display = "none";
+            info.style.display = "block";
+            updateBtn.style.display = "inline-block";
+          });
+
+          // Handle update form submit
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+
+            try {
+              const res = await fetch("http://localhost:3000/update", {
+                method: "PUT",
+                headers: {
+                  "Authorization": `Bearer ${token}` //  Add token
+                },
+                body: formData
+              });
+
+              if (!res.ok) throw new Error("Update failed");
+
+              alert("Updated successfully!");
+              loadImages();
+
+            } catch (err) {
+              alert("Failed to update: " + err.message);
+            }
+          });
+
+          card.appendChild(image);
+          card.appendChild(info);
+          card.appendChild(updateBtn);
+          card.appendChild(form);
+          card.appendChild(deleteBtn);
+
+          gallery.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Error loading images:", err);
+      }
+    }
+
+    loadImages();
+  </script>
+</body>
+</html>
