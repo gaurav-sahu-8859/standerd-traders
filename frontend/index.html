@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html lang="en">
@@ -6,89 +7,89 @@
 
 <head>
 
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8" />
 
-  <title>View Images</title>
+  <title>View Images</title>
 
-  <style>
+  <style>
 
-    .image-card {
+    .image-card {
 
-      display: inline-block;
+      display: inline-block;
 
-      margin: 10px;
+      margin: 10px;
 
-      border: 1px solid #ddd;
+      border: 1px solid #ddd;
 
-      padding: 8px;
+      padding: 8px;
 
-      width: 220px;
+      width: 220px;
 
-      vertical-align: top;
+      vertical-align: top;
 
-      font-family: sans-serif;
+      font-family: sans-serif;
 
-      position: relative;
+      position: relative;
 
-    }
-
-
-
-    .image-card img {
-
-      width: 200px;
-
-      display: block;
-
-      margin-bottom: 8px;
-
-    }
+    }
 
 
 
-    .info {
+    .image-card img {
 
-      font-size: 14px;
+      width: 200px;
 
-      color: #333;
+      display: block;
 
-      margin-bottom: 8px;
+      margin-bottom: 8px;
 
-    }
-
-
-
-    .update-form {
-
-      display: none;
-
-      font-size: 14px;
-
-    }
+    }
 
 
 
-    .update-form input {
+    .info {
 
-      width: 100%;
+      font-size: 14px;
 
-      margin-bottom: 6px;
+      color: #333;
 
-      box-sizing: border-box;
+      margin-bottom: 8px;
 
-      padding: 4px;
-
-    }
+    }
 
 
 
-    button {
+    .update-form {
 
-      cursor: pointer;
+      display: none;
 
-    }
+      font-size: 14px;
 
-  </style>
+    }
+
+
+
+    .update-form input {
+
+      width: 100%;
+
+      margin-bottom: 6px;
+
+      box-sizing: border-box;
+
+      padding: 4px;
+
+    }
+
+
+
+    button {
+
+      cursor: pointer;
+
+    }
+
+  </style>
 
 </head>
 
@@ -98,289 +99,289 @@
 
   <a href="./upload.html">upload</a>
   <a href="./view.html">view</a>
-  <h1>Uploaded Images</h1>
+  <h1>Uploaded Images</h1>
 
-  <div id="gallery"></div>
+  <div id="gallery"></div>
 
 
 
-  <script>
+  <script>
 
-    async function loadImages() {
+    async function loadImages() {
 
-      try {
+      try {
 
-        const res = await fetch("http://localhost:3000/images");
+        const res = await fetch("https://standerd-traders.onrender.com/images");
 
-        const images = await res.json();
+        const images = await res.json();
 
 
 
-        const gallery = document.getElementById("gallery");
+        const gallery = document.getElementById("gallery");
 
-        gallery.innerHTML = "";
+        gallery.innerHTML = "";
 
 
 
-        images.forEach(img => {
+        images.forEach(img => {
 
-          const url = "http://localhost:3000" + img.path;
+          const url = "https://standerd-traders.onrender.com" + img.path;
 
 
 
-          const card = document.createElement("div");
+          const card = document.createElement("div");
 
-          card.className = "image-card";
+          card.className = "image-card";
 
 
 
-          const image = document.createElement("img");
+          const image = document.createElement("img");
 
-          image.src = url;
+          image.src = url;
 
 
 
-          const info = document.createElement("div");
+          const info = document.createElement("div");
 
-          info.className = "info";
+          info.className = "info";
 
-          info.innerHTML = `
+          info.innerHTML = `
 
-            <strong>Name:</strong> <span class="display-name">${img.name || "N/A"}</span><br/>
+            <strong>Name:</strong> <span class="display-name">${img.name || "N/A"}</span><br/>
 
-            <strong>Email:</strong> <span class="display-email">${img.email || "N/A"}</span><br/>
+            <strong>Email:</strong> <span class="display-email">${img.email || "N/A"}</span><br/>
 
-            <strong>Profession:</strong> <span class="display-profession">${img.profession || "N/A"}</span><br/>
+            <strong>Profession:</strong> <span class="display-profession">${img.profession || "N/A"}</span><br/>
 
-            <small>Uploaded at: ${new Date(img.uploadedAt).toLocaleString()}</small>
+            <small>Uploaded at: ${new Date(img.uploadedAt).toLocaleString()}</small>
 
-          `;
+          `;
 
 
 
-          // Update button
+          // Update button
 
-          const updateBtn = document.createElement("button");
+          const updateBtn = document.createElement("button");
 
-          updateBtn.textContent = "Update";
+          updateBtn.textContent = "Update";
 
-          updateBtn.style.marginBottom = "8px";
+          updateBtn.style.marginBottom = "8px";
 
 
 
-          // Update form
+          // Update form
 
-          const form = document.createElement("form");
+          const form = document.createElement("form");
 
-          form.className = "update-form";
+          form.className = "update-form";
 
 
 
-          form.innerHTML = `
+          form.innerHTML = `
 
-            <input type="text" name="name" value="${img.name || ""}" placeholder="Name" required />
+            <input type="text" name="name" value="${img.name || ""}" placeholder="Name" required />
 
-            <input type="email" name="email" value="${img.email || ""}" placeholder="Email" required />
+            <input type="email" name="email" value="${img.email || ""}" placeholder="Email" required />
 
-            <input type="text" name="profession" value="${img.profession || ""}" placeholder="Profession" required />
+            <input type="text" name="profession" value="${img.profession || ""}" placeholder="Profession" required />
 
-            <button type="submit">Save</button>
+            <button type="submit">Save</button>
 
-            <button type="button" class="cancel-btn">Cancel</button>
+            <button type="button" class="cancel-btn">Cancel</button>
 
-          `;
+          `;
 
 
 
-          // (Update button and form event listeners — keep your existing code here)
+          // (Update button and form event listeners — keep your existing code here)
 
 
 
-          // DELETE button
+          // DELETE button
 
-          const deleteBtn = document.createElement("button");
+          const deleteBtn = document.createElement("button");
 
-          deleteBtn.textContent = "Delete";
+          deleteBtn.textContent = "Delete";
 
-          deleteBtn.style.marginLeft = "8px";
+          deleteBtn.style.marginLeft = "8px";
 
-          deleteBtn.style.cursor = "pointer";
+          deleteBtn.style.cursor = "pointer";
 
 
 
-          deleteBtn.addEventListener("click", async () => {
+          deleteBtn.addEventListener("click", async () => {
 
-            if (!confirm("Are you sure you want to delete this image?")) return;
+            if (!confirm("Are you sure you want to delete this image?")) return;
 
 
 
-            try {
+            try {
 
-              const res = await fetch("http://localhost:3000/delete", {
+              const res = await fetch("https://standerd-traders.onrender.com/delete", {
 
-                method: "DELETE",
+                method: "DELETE",
 
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json" },
 
-                body: JSON.stringify({ originalFileName: img.originalFileName }),
+                body: JSON.stringify({ originalFileName: img.originalFileName }),
 
-              });
+              });
 
 
 
-              if (!res.ok) throw new Error("Delete failed");
+              if (!res.ok) throw new Error("Delete failed");
 
 
 
-              alert("Deleted successfully");
+              alert("Deleted successfully");
 
-              loadImages(); // refresh UI
+              loadImages(); // refresh UI
 
 
 
-            } catch (err) {
+            } catch (err) {
 
-              alert("Failed to delete: " + err.message);
+              alert("Failed to delete: " + err.message);
 
-            }
+            }
 
-          });
+          });
 
 
 
-          // Show form on update button click
+          // Show form on update button click
 
-          updateBtn.addEventListener("click", () => {
+          updateBtn.addEventListener("click", () => {
 
-            form.style.display = "block";
+            form.style.display = "block";
 
-            info.style.display = "none";
+            info.style.display = "none";
 
-            updateBtn.style.display = "none";
+            updateBtn.style.display = "none";
 
-          });
+          });
 
 
 
-          // Cancel button hides form
+          // Cancel button hides form
 
-          form.querySelector(".cancel-btn").addEventListener("click", (e) => {
+          form.querySelector(".cancel-btn").addEventListener("click", (e) => {
 
-            e.preventDefault();
+            e.preventDefault();
 
-            form.style.display = "none";
+            form.style.display = "none";
 
-            info.style.display = "block";
+            info.style.display = "block";
 
-            updateBtn.style.display = "inline-block";
+            updateBtn.style.display = "inline-block";
 
-          });
+          });
 
 
 
-          // Handle form submit
+          // Handle form submit
 
-          form.addEventListener("submit", async (e) => {
+          form.addEventListener("submit", async (e) => {
 
-            e.preventDefault();
+            e.preventDefault();
 
-            const formData = new FormData(form);
+            const formData = new FormData(form);
 
-            const updatedData = {
+            const updatedData = {
 
-              name: formData.get("name"),
+              name: formData.get("name"),
 
-              email: formData.get("email"),
+              email: formData.get("email"),
 
-              profession: formData.get("profession"),
+              profession: formData.get("profession"),
 
-              originalFileName: img.originalFileName,
+              originalFileName: img.originalFileName,
 
-            };
+            };
 
 
 
-            try {
+            try {
 
-              const res = await fetch("http://localhost:3000/update", {
+              const res = await fetch("https://standerd-traders.onrender.com/update", {
 
-                method: "PUT",
+                method: "PUT",
 
-                headers: {
+                headers: {
 
-                  "Content-Type": "application/json",
+                  "Content-Type": "application/json",
 
-                },
+                },
 
-                body: JSON.stringify(updatedData),
+                body: JSON.stringify(updatedData),
 
-              });
+              });
 
 
 
-              if (!res.ok) throw new Error("Update failed");
+              if (!res.ok) throw new Error("Update failed");
 
 
 
-              // Update UI with new data
+              // Update UI with new data
 
-              info.querySelector(".display-name").textContent = updatedData.name;
+              info.querySelector(".display-name").textContent = updatedData.name;
 
-              info.querySelector(".display-email").textContent = updatedData.email;
+              info.querySelector(".display-email").textContent = updatedData.email;
 
-              info.querySelector(".display-profession").textContent = updatedData.profession;
+              info.querySelector(".display-profession").textContent = updatedData.profession;
 
 
 
-              form.style.display = "none";
+              form.style.display = "none";
 
-              info.style.display = "block";
+              info.style.display = "block";
 
-              updateBtn.style.display = "inline-block";
+              updateBtn.style.display = "inline-block";
 
-            } catch (err) {
+            } catch (err) {
 
-              alert("Failed to update: " + err.message);
+              alert("Failed to update: " + err.message);
 
-            }
+            }
 
-          });
+          });
 
 
 
-          card.appendChild(image);
+          card.appendChild(image);
 
-          card.appendChild(info);
+          card.appendChild(info);
 
-          card.appendChild(updateBtn);
+          card.appendChild(updateBtn);
 
-          card.appendChild(form);
+          card.appendChild(form);
 
-          card.appendChild(deleteBtn);  // append delete button here
+          card.appendChild(deleteBtn);  // append delete button here
 
 
 
-          gallery.appendChild(card);
+          gallery.appendChild(card);
 
-        });
+        });
 
-      } catch (err) {
+      } catch (err) {
 
-        console.error("Error loading images:", err);
+        console.error("Error loading images:", err);
 
-      }
+      }
 
-    }
+    }
 
 
 
-    loadImages();
+    loadImages();
 
 
 
 
 
-  </script>
+  </script>
 
 </body>
 
