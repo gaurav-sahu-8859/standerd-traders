@@ -111,7 +111,7 @@
 
       try {
 
-        const res = await fetch("http://localhost:3000/images");
+        const res = await fetch("https://standerd-traders.onrender.com/images");
 
         const images = await res.json();
 
@@ -125,7 +125,7 @@
 
         images.forEach(img => {
 
-          const url = "http://localhost:3000" + img.path;
+          const url = "https://standerd-traders.onrender.com" + img.path;
 
 
 
@@ -217,7 +217,7 @@
 
             try {
 
-              const res = await fetch("http://localhost:3000/delete", {
+              const res = await fetch("https://standerd-traders.onrender.com/delete", {
 
                 method: "DELETE",
 
@@ -303,7 +303,7 @@
 
             try {
 
-              const res = await fetch("http://localhost:3000/update", {
+              const res = await fetch("https://standerd-traders.onrender.com/update", {
 
                 method: "PUT",
 
@@ -388,4 +388,5 @@
 
 
 </html>
+
 
