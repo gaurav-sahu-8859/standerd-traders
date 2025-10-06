@@ -1,54 +1,387 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
+
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Example</title>
+
+  <meta charset="UTF-8" />
+
+  <title>View Images</title>
+
+  <style>
+
+    .image-card {
+
+      display: inline-block;
+
+      margin: 10px;
+
+      border: 1px solid #ddd;
+
+      padding: 8px;
+
+      width: 220px;
+
+      vertical-align: top;
+
+      font-family: sans-serif;
+
+      position: relative;
+
+    }
+
+
+
+    .image-card img {
+
+      width: 200px;
+
+      display: block;
+
+      margin-bottom: 8px;
+
+    }
+
+
+
+    .info {
+
+      font-size: 14px;
+
+      color: #333;
+
+      margin-bottom: 8px;
+
+    }
+
+
+
+    .update-form {
+
+      display: none;
+
+      font-size: 14px;
+
+    }
+
+
+
+    .update-form input {
+
+      width: 100%;
+
+      margin-bottom: 6px;
+
+      box-sizing: border-box;
+
+      padding: 4px;
+
+    }
+
+
+
+    button {
+
+      cursor: pointer;
+
+    }
+
+  </style>
+
 </head>
 
+
+
 <body>
-    <form id="myForm">
-        <label>Name:</label><br>
-        <input type="text" name="name" required><br><br>
+
+  <h1>Uploaded Images</h1>
+
+  <div id="gallery"></div>
 
 
-        <label>Email:</label><br>
-        <input type="email" name="email" required><br><br>
+
+  <script>
+
+    async function loadImages() {
+
+      try {
+
+        const res = await fetch("http://localhost:3000/images");
+
+        const images = await res.json();
 
 
-        <label>Password:</label><br>
-        <input type="password" name="password" required><br><br>
+
+        const gallery = document.getElementById("gallery");
+
+        gallery.innerHTML = "";
 
 
-        <button type="submit">Submit</button>
-    </form>
+
+        images.forEach(img => {
+
+          const url = "http://localhost:3000" + img.path;
 
 
-    <script>
-        const form = document.getElementById("myForm");
+
+          const card = document.createElement("div");
+
+          card.className = "image-card";
 
 
-        form.addEventListener("submit", (e) => {
-            e.preventDefault(); // Prevent page reload
+
+          const image = document.createElement("img");
+
+          image.src = url;
 
 
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
+
+          const info = document.createElement("div");
+
+          info.className = "info";
+
+          info.innerHTML = `
+
+            <strong>Name:</strong> <span class="display-name">${img.name || "N/A"}</span><br/>
+
+            <strong>Email:</strong> <span class="display-email">${img.email || "N/A"}</span><br/>
+
+            <strong>Profession:</strong> <span class="display-profession">${img.profession || "N/A"}</span><br/>
+
+            <small>Uploaded at: ${new Date(img.uploadedAt).toLocaleString()}</small>
+
+          `;
 
 
-            fetch("http://localhost:3000/submit", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            })
-                .then(res => res.text())
-                .then(msg => alert(msg))
-                .catch(err => console.error(err));
-        });
-    </script>
+
+          // Update button
+
+          const updateBtn = document.createElement("button");
+
+          updateBtn.textContent = "Update";
+
+          updateBtn.style.marginBottom = "8px";
+
+
+
+          // Update form
+
+          const form = document.createElement("form");
+
+          form.className = "update-form";
+
+
+
+          form.innerHTML = `
+
+            <input type="text" name="name" value="${img.name || ""}" placeholder="Name" required />
+
+            <input type="email" name="email" value="${img.email || ""}" placeholder="Email" required />
+
+            <input type="text" name="profession" value="${img.profession || ""}" placeholder="Profession" required />
+
+            <button type="submit">Save</button>
+
+            <button type="button" class="cancel-btn">Cancel</button>
+
+          `;
+
+
+
+          // (Update button and form event listeners — keep your existing code here)
+
+
+
+          // DELETE button
+
+          const deleteBtn = document.createElement("button");
+
+          deleteBtn.textContent = "Delete";
+
+          deleteBtn.style.marginLeft = "8px";
+
+          deleteBtn.style.cursor = "pointer";
+
+
+
+          deleteBtn.addEventListener("click", async () => {
+
+            if (!confirm("Are you sure you want to delete this image?")) return;
+
+
+
+            try {
+
+              const res = await fetch("http://localhost:3000/delete", {
+
+                method: "DELETE",
+
+                headers: { "Content-Type": "application/json" },
+
+                body: JSON.stringify({ originalFileName: img.originalFileName }),
+
+              });
+
+
+
+              if (!res.ok) throw new Error("Delete failed");
+
+
+
+              alert("Deleted successfully");
+
+              loadImages(); // refresh UI
+
+
+
+            } catch (err) {
+
+              alert("Failed to delete: " + err.message);
+
+            }
+
+          });
+
+
+
+          // Show form on update button click
+
+          updateBtn.addEventListener("click", () => {
+
+            form.style.display = "block";
+
+            info.style.display = "none";
+
+            updateBtn.style.display = "none";
+
+          });
+
+
+
+          // Cancel button hides form
+
+          form.querySelector(".cancel-btn").addEventListener("click", (e) => {
+
+            e.preventDefault();
+
+            form.style.display = "none";
+
+            info.style.display = "block";
+
+            updateBtn.style.display = "inline-block";
+
+          });
+
+
+
+          // Handle form submit
+
+          form.addEventListener("submit", async (e) => {
+
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            const updatedData = {
+
+              name: formData.get("name"),
+
+              email: formData.get("email"),
+
+              profession: formData.get("profession"),
+
+              originalFileName: img.originalFileName,
+
+            };
+
+
+
+            try {
+
+              const res = await fetch("http://localhost:3000/update", {
+
+                method: "PUT",
+
+                headers: {
+
+                  "Content-Type": "application/json",
+
+                },
+
+                body: JSON.stringify(updatedData),
+
+              });
+
+
+
+              if (!res.ok) throw new Error("Update failed");
+
+
+
+              // Update UI with new data
+
+              info.querySelector(".display-name").textContent = updatedData.name;
+
+              info.querySelector(".display-email").textContent = updatedData.email;
+
+              info.querySelector(".display-profession").textContent = updatedData.profession;
+
+
+
+              form.style.display = "none";
+
+              info.style.display = "block";
+
+              updateBtn.style.display = "inline-block";
+
+            } catch (err) {
+
+              alert("Failed to update: " + err.message);
+
+            }
+
+          });
+
+
+
+          card.appendChild(image);
+
+          card.appendChild(info);
+
+          card.appendChild(updateBtn);
+
+          card.appendChild(form);
+
+          card.appendChild(deleteBtn);  // append delete button here
+
+
+
+          gallery.appendChild(card);
+
+        });
+
+      } catch (err) {
+
+        console.error("Error loading images:", err);
+
+      }
+
+    }
+
+
+
+    loadImages();
+
+
+
+
+
+  </script>
+
 </body>
+
+
 
 </html>
